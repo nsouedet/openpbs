@@ -59,7 +59,11 @@ mkdir ../tp
 __python="$(grep -rE '^#!/usr/bin/(python|env python)[23]' fw/bin/pbs_benchpress | awk -F[/" "] '{print $NF}')"
 ${__python} -m pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org --prefix $(pwd)/tp -r fw/requirements.txt fw/.
 cd tests
-PYTHONPATH=../tp/lib/$(/bin/ls -1 ../tp/lib)/site-packages ${__python} ../tp/bin/pbs_benchpress $1 --gen-ts-tree
+# Depending on pip and python versions, pip install should have installed pbs_benchpress
+# either in ../tp/bin or ../tp/local/bin
+__pbs_benchpress=$(/usr/bin/find ../tp -type f -name pbs_benchpress)
+__install_dir=$(dirname $(dirname ${__pbs_benchpress}))
+PYTHONPATH=$(/bin/ls -1d ${__install_dir}/lib/*/*-packages) ${__python} ${__install_dir}/bin/pbs_benchpress $1 --gen-ts-tree
 ret=$?
 if [ ${ret} -ne 0 ]; then
 	echo "Failed to generate ptl json"
