@@ -113,7 +113,7 @@ main(int argc, char *argv[], char *envp[])
 	char *filename = NULL;
 	char filename_buf[MAXPATHLEN];
 	char *username;
-	struct xy cur_xy, prev_xy;
+	struct xy cur_xy = {-1,-1}, prev_xy;
 	struct stat st;
 	char errbuf[BUFSIZ]; /* BUFSIZ is sufficient to hold buffer msg */
 	int fd;
