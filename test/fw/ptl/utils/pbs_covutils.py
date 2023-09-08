@@ -49,6 +49,10 @@ from ptl.utils.pbs_dshutils import DshUtils
 from ptl.utils.pbs_cliutils import CliUtils
 
 try:
+    # fix for BeautifulSoup to support collections in python 3.10
+    import collections
+    if not getattr(collections, 'Callable', None):
+        collections.Callable = collections.abc.Callable
     from BeautifulSoup import BeautifulSoup
 except Exception:
     pass
