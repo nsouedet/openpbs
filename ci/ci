@@ -514,8 +514,16 @@ def build_compose_file(nodes):
                         " ci, will result in unexpected behaviour")
             log_warning("Supported platforms are " +
                         MACROS['SUPPORTED_PLATFORMS'])
+        # This replacement is not valid anymore for hostname 
+        # because hostname does not support '_' characters (see RFC952)
+        # and docker neither support. In lastests versions of docker, 
+        # '_' in hostname is simply removed. This has the consequense 
+        # that 'ci' command turn in infinite loop (server is never seen 
+        # with status READY because of a mismatch in the status file.
+        # hostname with '_' is searched but the file contains hostname without '_'.
         node_name = node_key + '-' + \
-            (node_val.replace(':', '-')).replace('.', '_') + '-' + str(count)
+            (node_val.replace(':', '-')).replace('.', '') + '-' + str(count)
+            
         image_value = node_val
         _, image_value = check_for_existing_image(node_val)
         service_template = json.loads(service_template_prist.substitute(
@@ -571,7 +579,7 @@ def ensure_ci_running():
         else:
             log_info("running container found")
             return 0
-    except:
+    except Exception as e:
         log_error(e)
 
 
